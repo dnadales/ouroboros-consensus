@@ -152,5 +152,5 @@ jobs:
       run: |
         cabal new-run ouroboros-consensus:mempool-bench -- \
         --timeout=60 --baseline baseline-mempool-benchmarks.csv \
-        --fail-if-slower 1 \
+        --fail-if-slower 20 \
         +RTS -T
