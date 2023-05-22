@@ -39,7 +39,7 @@ jobs:
     - name: Cabal check
       run: ./scripts/ci/check-cabal-files.sh
 
-  build-test-bench:
+  build-test-bench-haddocks:
     name: Build and test using cabal
 
     runs-on: ${{ matrix.os }}
@@ -172,6 +172,8 @@ jobs:
   deploy-documentation:
 
     name: Deploy documentation to GitHub Pages
+
+    needs: build-test-bench-haddocks
 
     runs-on: ${{ matrix.os }}
 
