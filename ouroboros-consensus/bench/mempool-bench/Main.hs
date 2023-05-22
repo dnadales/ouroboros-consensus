@@ -32,7 +32,7 @@ import           Test.Tasty.Runners (parseOptions, tryIngredients)
 
 main :: IO ()
 main = do
-    let csvFilePath = "mempool-benchmarks.csv"
+    let csvFilePath = "mempool-benchmarks.csv" -- Try again
     runBenchmarks csvFilePath
     rawValues <- parseBenchmarkResults csvFilePath
     convertCsvRowsToJsonObjects rawValues "mempool-benchmarks.json"
