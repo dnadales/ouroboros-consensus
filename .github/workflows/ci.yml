@@ -128,12 +128,13 @@ jobs:
         ./scripts/docs/haddocks.sh
         ls ./docs/website/static/haddocks
 
+    # TODO: only on push to master?
     - name: Upload haddock as artifact
       if: ${{ matrix.os=='ubuntu-latest' }} && ${{ matrix.ghc=='8.10.7' }}
       uses: actions/upload-artifact@v3
       with:
         name: haddocks
-        path: ./docs/website/static/haddocks
+        path: ./docs/website/static/haddocks/
 
     # TODO: uncoment me on the final version
     # - name: Test
@@ -213,6 +214,7 @@ jobs:
         run: |
           pwd
           ls *
+          echo "Top level dir ..."
           ls ../../
           cp -r ../../haddocks ./static/
 
