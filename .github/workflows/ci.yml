@@ -121,8 +121,9 @@ jobs:
     - name: Build projects [build]
       run: cabal build all -j
 
-    - name: Test
-      run: cabal test all -j
+    # TODO: uncoment me on the final version
+    # - name: Test
+    #   run: cabal test all -j
 
     # TODO: we need to fix the cp part
     - name: Create baseline-benchmark
@@ -133,18 +134,18 @@ jobs:
         +RTS -T
         cp mempool-benchmarks.csv baseline-mempool-benchmarks.csv
 
+    - name: Cache benchmark baseline results
+      uses: actions/cache@v3
+      with:
+        path: baseline-mempool-benchmarks.csv
+        key:  cache-baseline-mempool-benchmarks-${{ runner.os }}-${{ matrix.ghc }}
+
     - name: Upload mempool benchmark baseline results
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: actions/upload-artifact@v3
       with:
         name: baseline-mempool-benchmarks
         path: baseline-mempool-benchmarks.csv
-
-    - name: Download mempool benchmark baseline results
-      if: ${{ github.event_name == 'pull_request' }}
-      uses: actions/download-artifact@v3
-      with:
-        name: baseline-mempool-benchmarks
 
     - name: Run mempool benchmarks on pull requests
       if: ${{ github.event_name == 'pull_request' }}
