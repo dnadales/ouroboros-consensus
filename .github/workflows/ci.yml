@@ -211,8 +211,10 @@ jobs:
 
       - name: Copy haddocks
         run: |
+          pwd
           ls *
-          mkdir ./static/ ; cp -r haddocks ./static/
+          ls ../../
+          cp -r ../../haddocks ./static/
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
