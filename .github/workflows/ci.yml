@@ -207,7 +207,7 @@ jobs:
       - name: Download haddocks
         uses: actions/download-artifact@v3
         with:
-          name: my-artifact
+          name: haddocks
 
       - name: Copy haddocks
         run: |
