@@ -134,7 +134,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: haddocks
-        path: ./docs/website/static/haddocks/
+        path: ./docs/website/static/
 
     # TODO: uncoment me on the final version
     # - name: Test
