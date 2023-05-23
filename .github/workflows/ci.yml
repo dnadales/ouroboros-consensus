@@ -217,10 +217,22 @@ jobs:
           pwd
           ls *
           cd ../../
-          tar zxf haddocks.tgz
+          tar vzxf haddocks.tgz
+          echo "\nls\n"
+          ls
+          echo "\nls ../../\n"
+          ls ../../
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Build website
         run: yarn build
+
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./docs/website/build
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v2
