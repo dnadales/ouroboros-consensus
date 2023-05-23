@@ -236,3 +236,12 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v2
+
+    # https://github.com/actions/deploy-pages
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
