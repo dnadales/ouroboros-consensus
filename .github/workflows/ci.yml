@@ -121,20 +121,22 @@ jobs:
     - name: Build projects [build]
       run: cabal build all -j
 
+    # TODO: we might want to do this only on pushes to main
     - name: build Haddock documentation 🔧
       if: ${{ matrix.os=='ubuntu-latest' }} && ${{ matrix.ghc=='8.10.7' }}
       run: |
         cabal build --dry-run --enable-tests all
         ./scripts/docs/haddocks.sh
-        ls ./docs/website/static/
+        tar vzcf haddocks.tgz ./docs/website/static/haddocks
 
-    # TODO: only on push to master?
+    # TODO: only on push to main?
     - name: Upload haddock as artifact
       if: ${{ matrix.os=='ubuntu-latest' }} && ${{ matrix.ghc=='8.10.7' }}
       uses: actions/upload-artifact@v3
       with:
         name: haddocks
-        path: ./docs/website/static/
+        path: haddocks.tgz
+        retention-days: 1
 
     # TODO: uncoment me on the final version
     # - name: Test
@@ -214,9 +216,8 @@ jobs:
         run: |
           pwd
           ls *
-          echo "Top level dir ..."
-          ls ../../
-          cp -r ../../haddocks ./static/
+          cd ../../
+          tar zxf haddocks.tgz
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
