@@ -186,7 +186,7 @@ jobs:
         restore-keys: baseline-mempool-benchmarks-${{ runner.os }}-${{ matrix.ghc }}
 
     # We only update the cache if we just ran a benchmark on main.
-    - name: Create baseline-benchmark
+    - name: Copy baseline-benchmark to cache
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: cp mempool-benchmarks.csv baseline-mempool-benchmarks.csv
 
@@ -208,6 +208,8 @@ jobs:
   deploy-documentation:
 
     name: Deploy documentation to GitHub Pages
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     needs: build-test-bench-haddocks
 
