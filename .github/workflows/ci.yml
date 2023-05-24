@@ -198,7 +198,7 @@ jobs:
 
     needs: build-test-bench-haddocks
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     defaults:
       run:
