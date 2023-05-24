@@ -143,7 +143,7 @@ jobs:
         #./scripts/docs/haddocks.sh
         # TODO: remove
         mkdir -p ./docs/website/static/haddocks
-        echo "Hello" ./docs/website/static/haddocks/index.html
+        echo "Hello" > ./docs/website/static/haddocks/index.html
         tar vzcf haddocks.tgz ./docs/website/static/haddocks
 
     - name: Upload haddocks as an artifact
@@ -163,19 +163,32 @@ jobs:
     #   run: cabal test all -j
 
     # TODO: we need to fix the cp part
-    # - name: Create baseline-benchmark
-    #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    #   run: |
-    #     cabal new-run ouroboros-consensus:mempool-bench -- \
-    #     --timeout=60 --csv mempool-benchmarks.csv \
-    #     +RTS -T
-    #     cp mempool-benchmarks.csv baseline-mempool-benchmarks.csv
+    - name: Create baseline-benchmark
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        cabal new-run ouroboros-consensus:mempool-bench -- \
+        --timeout=60 --csv mempool-benchmarks.csv \
+        +RTS -T
 
-    # - name: Cache benchmark baseline results
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: baseline-mempool-benchmarks.csv
-    #     key:  cache-baseline-mempool-benchmarks-${{ runner.os }}-${{ matrix.ghc }}
+    # TODO: we only care about saving the baseline results when we run on the
+    # main branch. However we need to restore the cache when we run the
+    # benchmarks during PRs. The caching mechanism of GitHub actions does not
+    # allow to not save a cache entry.
+    #
+    # The run_id is only relevant to store a new benchmarking result when we run
+    # on main. If we run this workflow in the context of a PR, then we will save
+    # the same results we just restored.
+    - name: Cache benchmark baseline results
+      uses: actions/cache@v3
+      with:
+        path: baseline-mempool-benchmarks.csv
+        key:  baseline-mempool-benchmarks-${{ runner.os }}-${{ matrix.ghc }}-${{ github.run_id }}
+        restore-keys: baseline-mempool-benchmarks-${{ runner.os }}-${{ matrix.ghc }}
+
+    # We only update the cache if we just ran a benchmark on main.
+    - name: Create baseline-benchmark
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: cp mempool-benchmarks.csv baseline-mempool-benchmarks.csv
 
     # - name: Upload mempool benchmark baseline results
     #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -184,13 +197,13 @@ jobs:
     #     name: baseline-mempool-benchmarks
     #     path: baseline-mempool-benchmarks.csv
 
-    # - name: Run mempool benchmarks on pull requests
-    #   if: ${{ github.event_name == 'pull_request' }}
-    #   run: |
-    #     cabal new-run ouroboros-consensus:mempool-bench -- \
-    #     --timeout=60 --baseline baseline-mempool-benchmarks.csv \
-    #     --fail-if-slower 20 \
-    #     +RTS -T
+    - name: Run mempool benchmarks on pull requests
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        cabal new-run ouroboros-consensus:mempool-bench -- \
+        --timeout=60 --baseline baseline-mempool-benchmarks.csv \
+        --fail-if-slower 20 \
+        +RTS -T
 
   deploy-documentation:
 
