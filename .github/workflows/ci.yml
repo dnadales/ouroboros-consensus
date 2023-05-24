@@ -141,6 +141,9 @@ jobs:
       run: |
         cabal build --dry-run --enable-tests all
         #./scripts/docs/haddocks.sh
+        # TODO: remove
+        mkdir -p ./docs/website/static/haddocks
+        echo "Hello" ./docs/website/static/haddocks/index.html
         tar vzcf haddocks.tgz ./docs/website/static/haddocks
 
     - name: Upload haddocks as an artifact
