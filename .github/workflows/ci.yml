@@ -209,6 +209,8 @@ jobs:
 
     name: Deploy documentation to GitHub Pages
 
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
     needs: build-test-bench-haddocks
 
     runs-on: ubuntu-latest
